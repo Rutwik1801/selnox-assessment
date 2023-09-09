@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 function RegistrationForm(props) {
+  const [error,setError]=useState("")
   const [loading,setLoading]=useState(false)
   const [studyField, setStudyField] = useState("");
   const [firsName,setFirstName]=useState("")
@@ -68,7 +69,11 @@ setLastName(e.target.value)
     setDob(e.target.value)
   }
   const handleSalaryChange=(e)=>{
-   setSalary(e.target.value)
+    if(e.target.value<0){
+      setSalary(0);
+    }else{
+      setSalary(e.target.value)
+    }
   }
   const handleStudyFieldChange = (event) => {
     setStudyField(event.target.value);
@@ -88,7 +93,10 @@ const handleCancelClick=()=>{
   navigate("/employeesTable")
 }
   const handleEmployeeSubmission=async ()=>{
-    const employeeObject={
+    if(firsName==="" || lastName==="" || dob==="" || studyField==="" || startDate==="" || endDate==="" || salary===""){
+      setError("Please fill all the fields");
+    }else{
+      const employeeObject={
         "id":1,
         FirstName:firsName,
         LastName:lastName,
@@ -109,6 +117,7 @@ const handleCancelClick=()=>{
         body:JSON.stringify(employeeObject),
       });
       navigate("/employeesTable")
+    }
   }
 
   return (
@@ -120,6 +129,7 @@ const handleCancelClick=()=>{
       <Grid item xs={6}>
         <TextField
           label="First Name"
+          required
           variant="outlined"
           InputProps={{
               style: textFieldStyles
@@ -134,6 +144,7 @@ const handleCancelClick=()=>{
         <TextField
           label="Last Name"
           variant="outlined"
+          required
           fullWidth
           InputProps={{
               style: textFieldStyles
@@ -232,7 +243,7 @@ const handleCancelClick=()=>{
                     InputProps={{
                       style: textFieldStyles
                     }}
-          label="Additional Information"
+          label="Description"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -242,6 +253,7 @@ const handleCancelClick=()=>{
           onChange={handleAdditionalInfoChange}
         />
       </Grid>
+      {error===""?"":<p style={{color:"red"}}>{error}</p>}
       <Grid item xs={12} 
       sx={{display:"flex",flexDirection:{xs:"column",md:"row",justifyContent:"space-evenly",alignItems:{xs:"stretch",md:"center"}}}}
       >
