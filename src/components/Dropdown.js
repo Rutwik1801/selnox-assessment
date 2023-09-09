@@ -18,6 +18,7 @@ import Loader from './Loader';
 
 
 function Dropdown() {
+    const [clearFlag,setClearFlag]=useState(false)
     const [items,setItems]=useState([])
     const [loading,setLoading]=useState(false)
     const [search,setSearch]=useState("")
@@ -48,13 +49,20 @@ function Dropdown() {
     },[])
 
     const handleSearchChange=(e)=>{
+      if(e.target.value.length!==0){
+        setClearFlag(true)
+      }
         setSearch(e.target.value)
       const filteredItems=items.filter(item=>{
         return item.name.includes(e.target.value)
       })
       setFilteredData(filteredItems)
     }
-
+   const handleClearClickChange=(e)=>{
+    setSearch("");
+    setClearFlag(false)
+    setFilteredData(items)
+   }
     const handleToggle = (index) => () => {
         const currentIndex = checked.indexOf(index);
         const newChecked = [...checked];
@@ -106,10 +114,13 @@ function Dropdown() {
                        InputProps={{
                           style:{fontFamily:"Montserrat",color:"#DAE2EF"},
                           startAdornment: (
-                            <InputAdornment position="start" sx={{color:"#6F8BBC"}}>
-                              <SearchIcon />
+                            <InputAdornment position="end" sx={{color:"#6F8BBC"}}>
+                              <SearchIcon /> 
                             </InputAdornment>
                           ),
+                          endAdornment: (
+                            <p onClick={handleClearClickChange}>{clearFlag===true?"CLEAR":""}</p>
+                          )
                         }}
               placeholder='search employees'
                 fullWidth
